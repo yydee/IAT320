@@ -1,3 +1,5 @@
+//Reference: https://www.motolibrarian.com/flora/
+
 #include <Adafruit_NeoPixel.h>
 
 
