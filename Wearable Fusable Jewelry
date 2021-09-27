@@ -1,0 +1,55 @@
+#include <Adafruit_NeoPixel.h>
+
+
+#define PIN 12 //set pin12 for the serial connection of neopixels
+#define NUMPIXELS 2 //two neopixels in total are used
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  pixels.begin();
+  pixels.setBrightness(70);
+  pixels.show(); // Initialize all pixels to 'off'
+}
+
+void loop() {
+  rainbowCycle(20);//set how pixels will display - in this case, I choose the rainbow rgb loop
+}
+
+//fill the pixels one by one
+void colorWipe(uint32_t c, uint8_t wait) {
+  for(uint16_t i=0; i<NUMPIXELS; i++) {
+      pixels.setPixelColor(i, c);
+      pixels.show();
+      delay(wait);
+  }
+}
+
+//To define what is rainbowCycle that we have above
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256; j++) {
+    for(i=0; i<NUMPIXELS; i++) {
+      pixels.setPixelColor(i, Wheel(((i * 256 / NUMPIXELS) + j) & 255));
+    }
+    pixels.show();
+    delay(wait);
+  }
+}
+
+
+// Rainbow references 'Wheel' to determine its color.
+// The colors are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
